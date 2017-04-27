@@ -1,0 +1,8 @@
+Engine/Binaries/
+Engine/Build/
+
+Game/Bin/
+Game/Intermediate/
+Game/Resources/
+
+XPlat.sdf
