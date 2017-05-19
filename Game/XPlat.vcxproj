@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)Source;$(SolutionDir)Engine\Source;$(SolutionDir)Engine\ThirdParty;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Engine\Camera;$(ProjectDir)Source;$(SolutionDir)Engine\Source;$(SolutionDir)Engine\ThirdParty;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Engine\Binaries\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>$(ProjectDir)Intermediate\$(Configuration)\$(Platform)\</IntDir>

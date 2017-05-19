@@ -1,0 +1,3 @@
+TODOs
+
+Make new constant buffer to house just the Material to avoid passing unnecessary properties to shaders

@@ -5,18 +5,24 @@
 #include "Vertex.h"
 #include "RenderStates.h"
 #include "GObject.h"
+#include "GCube.h"
 #include "GFirstPersonCamera.h"
+#include "GStillCamera.h"
+
+struct ConstBufferPerFrame
+{
+	DirectionalLight light;
+	DirectX::XMFLOAT3 eyePosW;
+	float pad;
+};
 
 struct ConstBufferPerObject
 {
 	DirectX::XMMATRIX world;
 	DirectX::XMMATRIX worldViewProj;
-};
-	
-struct ConstBufferPerFrame
-{
-	DirectX::XMFLOAT3 camPosW;
-	float pad;
+	DirectX::XMMATRIX worldInvTranspose;
+	DirectX::XMMATRIX texTransform;
+	Material material;
 };
 
 struct ConstBufferPSParams
@@ -49,14 +55,7 @@ private:
 
 	void LoadTextureToSRV(ID3D11ShaderResourceView** srv, LPCWSTR filename);
 
-	void InitUserInput();
-	void PositionObjects();
-	void SetupStaticLights();
-
-	void DrawObject(GObject* object, const GFirstPersonCamera* camera);
-	void DrawObject(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& transform);
-	void DrawShadow(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& transform);
-	void Draw(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& world, bool bShadow);
+	void Draw(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& transform = DirectX::XMMatrixIdentity());
 
 private:
 	// Constant Buffers
@@ -70,12 +69,21 @@ private:
 	ConstBufferPerFrame* cbPerFrame;
 
 	// Shaders
+	ID3D11VertexShader* mBasicVertexShader;
+	ID3D11PixelShader* mBasicPixelShader;
 
 	// Vertex Layout
 	ID3D11InputLayout* mVertexLayout;
 	// Objects
+	GCube* mWallFloor;
+	GCube* mWallCeil;
+	GCube* mWallRight;
+	GCube* mWallLeft;
+
+	GCube* mCharacter;
 
 	// Lights
+	DirectionalLight mLight;
 
 	// Camera
 	GFirstPersonCamera mCamera;

@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)Engine\Utility;$(SolutionDir)Engine\ThirdParty;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Engine\Camera;$(SolutionDir)Engine\Source;$(SolutionDir)Engine\ThirdParty;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Engine\Lib;$(LibraryPath)</LibraryPath>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
     <OutDir>$(ProjectDir)Binaries\$(Configuration)\</OutDir>
@@ -120,13 +120,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera\GCamera.h" />
+    <ClInclude Include="Camera\GFirstPersonCamera.h" />
+    <ClInclude Include="Camera\GStillCamera.h" />
     <ClInclude Include="Source\D3DApp.h" />
     <ClInclude Include="Source\D3DTypes.h" />
     <ClInclude Include="Source\D3DUtil.h" />
     <ClInclude Include="Source\GameTimer.h" />
     <ClInclude Include="Source\GCube.h" />
     <ClInclude Include="Source\GeometryGenerator.h" />
-    <ClInclude Include="Source\GFirstPersonCamera.h" />
     <ClInclude Include="Source\GObject.h" />
     <ClInclude Include="Source\GPlane.h" />
     <ClInclude Include="Source\GPlaneXY.h" />
@@ -141,11 +143,13 @@
     <ClInclude Include="ThirdParty\DXErr.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera\GCamera.cpp" />
+    <ClCompile Include="Camera\GFirstPersonCamera.cpp" />
+    <ClCompile Include="Camera\GStillCamera.cpp" />
     <ClCompile Include="Source\D3DApp.cpp" />
     <ClCompile Include="Source\GameTimer.cpp" />
     <ClCompile Include="Source\GCube.cpp" />
     <ClCompile Include="Source\GeometryGenerator.cpp" />
-    <ClCompile Include="Source\GFirstPersonCamera.cpp" />
     <ClCompile Include="Source\GObject.cpp" />
     <ClCompile Include="Source\GPlane.cpp" />
     <ClCompile Include="Source\GPlaneXY.cpp" />

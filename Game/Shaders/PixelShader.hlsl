@@ -8,14 +8,50 @@
 
 #include "LightHelper.hlsl"
 
+cbuffer cbPerFrame : register(b0)
+{
+    DirectionalLight gLight;
+    float3 gEyePosW;
+    float pad;
+};
+
+cbuffer cbPerObject : register(b1)
+{
+    float4x4 gWorld;
+    float4x4 gWorldViewProj;
+    float4x4 gWorldInvTranspose;
+    float4x4 gTexTransform;
+    Material gMaterial;
+};
+
+Texture2D gDiffuseMap;
+
 struct VertexOut
 {
 	float4 PosH    : SV_POSITION;
 	float3 PosW    : POSITION;
+    float3 NormalW : NORMAL;
+    float2 TexC    : TEXCOORD;
 };
+
+SamplerState ssLinear : register(s0);
 
 float4 PS(VertexOut pin) : SV_Target
 {
-    float4 litColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-	return litColor; 
+    pin.NormalW = normalize(pin.NormalW);
+
+    float3 toEye = normalize(gEyePosW - pin.PosW);
+
+    float4 texColor = gDiffuseMap.Sample(ssLinear, pin.TexC);
+
+    float4 ambient  = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 diffuse  = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    ComputeDirectionalLight(gMaterial, gLight, pin.NormalW, toEye, ambient, diffuse, specular);
+    
+    float4 litColor = texColor*(ambient + diffuse) + specular;
+    litColor.a = gMaterial.Diffuse.a;
+	
+    return litColor; 
 }

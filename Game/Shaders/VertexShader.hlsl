@@ -13,17 +13,24 @@ cbuffer cbPerObject : register(b1)
 {
 	float4x4 gWorld;
     float4x4 gWorldViewProj;
+    float4x4 gWorldInvTranspose;
+    float4x4 gTexTransform;
+    Material gMaterial;
 };
 
 struct VertexIn
 {
 	float3 PosL    : POSITION;
+    float3 NormalL : NORMAL;
+    float2 Tex     : TEXCOORD;
 };
 
 struct VertexOut
 {
 	float4 PosH    : SV_POSITION;
 	float3 PosW    : POSITION;
+    float3 NormalW : NORMAL;
+    float2 Tex     : TEXCOORD;
 };
 
 VertexOut VS(VertexIn vin)
@@ -32,6 +39,11 @@ VertexOut VS(VertexIn vin)
 
 	vout.PosW = mul(float4(vin.PosL, 1.0f), gWorld).xyz;
 	vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
+
+    vout.NormalW = mul(float4(vin.NormalL, 1.0f), gWorldInvTranspose).xyz;
+
+    // TODO Work out this math
+    vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
 
     return vout;
 }

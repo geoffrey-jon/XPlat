@@ -8,7 +8,8 @@ __declspec(align(16))
 class GCube : public GObject
 {
 public:
-	GCube();
+	GCube(float x, float y, float z);
+
 	~GCube();
 
 	void* operator new(size_t i) { return _mm_malloc(i,16);	}

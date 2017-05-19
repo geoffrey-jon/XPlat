@@ -1,12 +1,12 @@
 #include "GFirstPersonCamera.h"
 
-GFirstPersonCamera::GFirstPersonCamera()
-	: mPosition(0.0f, 0.0f, 0.0f),
+GFirstPersonCamera::GFirstPersonCamera() : 
+	mPosition(0.0f, 0.0f, 0.0f),
 	mRight(1.0f, 0.0f, 0.0f),
 	mUp(0.0f, 1.0f, 0.0f),
 	mLook(0.0f, 0.0f, 1.0f)
 {
-	SetLens(0.25f*MathHelper::Pi, 1.0f, 1.0f, 1000.0f);
+	SetLens(0.25f*MathHelper::Pi, 1280.0f / 720.0f, 1.0f, 1000.0f);
 }
 
 GFirstPersonCamera::~GFirstPersonCamera()
@@ -120,7 +120,8 @@ void GFirstPersonCamera::SetLens(float fovY, float aspect, float zn, float zf)
 	mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f*mFovY);
 	mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f*mFovY);
 
-	DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
+//	DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
+	DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicOffCenterLH(-80.0f, 80.0f, -45.0f, 45.0f, 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
 }
 

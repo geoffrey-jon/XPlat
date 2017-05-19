@@ -35,29 +35,82 @@ bool MyApp::Init()
 	RenderStates::InitAll(mDevice);
 	
 	// Initialize Camera
+	float camDepth = 45.0f / tanf(0.5f * mCamera.GetFovY());
+	mCamera.SetPosition(80.0f, 45.0f, -camDepth);
+	mCamera.UpdateViewMatrix();
 
 	// Initialize User Input
-	InitUserInput();
 
 	// Intialize Lights
-	SetupStaticLights();
+	mLight.Ambient   = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mLight.Diffuse   = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	mLight.Specular  = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mLight.Direction = DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 	// Create Objects
+	mWallFloor = new GCube(160.0f, 5.0f, 1.0f);
+	mWallCeil  = new GCube(160.0f, 5.0f, 1.0f);
+	mWallLeft  = new GCube(5.0f, 90.0f, 1.0f);
+	mWallRight = new GCube(5.0f, 90.0f, 1.0f);
+	mCharacter = new GCube(5.0f, 5.0f, 5.0f);
+
+	CreateGeometryBuffers(mWallFloor, false);
+	CreateGeometryBuffers(mWallCeil, false);
+	CreateGeometryBuffers(mWallLeft, false);
+	CreateGeometryBuffers(mWallRight, false);
+	CreateGeometryBuffers(mCharacter, false);
 
 	// Initialize Object Placement and Properties
-	PositionObjects();
+	mWallFloor->Translate(80.0f, 2.5f, 0.0f);
+
+	mWallFloor->SetAmbient(DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
+	mWallFloor->SetDiffuse(DirectX::XMFLOAT4(0.6f, 0.6f, 0.0f, 1.0f));
+	mWallFloor->SetSpecular(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	mWallFloor->SetTextureScaling(8.0f, 0.25f);
+	LoadTextureToSRV(mWallFloor->GetDiffuseMapSRV(), L"Resources/Textures/brick.dds");
+
+	mWallCeil->Translate(80.0f, 87.5f, 0.0f);
+	mWallCeil->SetAmbient(DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
+	mWallCeil->SetDiffuse(DirectX::XMFLOAT4(0.6f, 0.6f, 0.0f, 1.0f));
+	mWallCeil->SetSpecular(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	mWallCeil->SetTextureScaling(8.0f, 0.25f);
+	LoadTextureToSRV(mWallCeil->GetDiffuseMapSRV(), L"Resources/Textures/brick.dds");
+
+	mWallLeft->Translate(2.5f, 45.0f, 0.0f);
+	mWallLeft->SetAmbient(DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
+	mWallLeft->SetDiffuse(DirectX::XMFLOAT4(0.6f, 0.6f, 0.0f, 1.0f));
+	mWallLeft->SetSpecular(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	mWallLeft->SetTextureScaling(0.25f, 4.5f);
+	LoadTextureToSRV(mWallLeft->GetDiffuseMapSRV(), L"Resources/Textures/brick.dds");
+
+	mWallRight->Translate(157.5f, 45.0f, 0.0f);
+	mWallRight->SetAmbient(DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
+	mWallRight->SetDiffuse(DirectX::XMFLOAT4(0.6f, 0.6f, 0.0f, 1.0f));
+	mWallRight->SetSpecular(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	mWallRight->SetTextureScaling(0.25f, 4.5f);
+	LoadTextureToSRV(mWallRight->GetDiffuseMapSRV(), L"Resources/Textures/brick.dds");
+
+	mCharacter->Translate(80.0f, 10.0f, 0.0f);
+	mCharacter->SetAmbient(DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
+	mCharacter->SetDiffuse(DirectX::XMFLOAT4(0.6f, 0.6f, 0.0f, 1.0f));
+	mCharacter->SetSpecular(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+//	mCharacter->SetTextureScaling(0.25f, 4.5f);
+	LoadTextureToSRV(mCharacter->GetDiffuseMapSRV(), L"Resources/Textures/crate.dds");
 
 	// Compile Shaders
+	CreateVertexShader(&mBasicVertexShader, L"Shaders/VertexShader.hlsl", "VS");
+	CreatePixelShader(&mBasicPixelShader, L"Shaders/PixelShader.hlsl", "PS");
 
 	// Create Constant Buffers
 	CreateConstantBuffer(&mConstBufferPerFrame, sizeof(ConstBufferPerFrame));
 	CreateConstantBuffer(&mConstBufferPerObject, sizeof(ConstBufferPerObject));
 
 	return true;
-}
-
-void MyApp::InitUserInput()
-{
 }
 
 void MyApp::OnMouseDown(WPARAM btnState, int x, int y)
@@ -119,10 +172,6 @@ void MyApp::CreateGeometryBuffers(GObject* obj, bool bDynamic)
 	}
 }
 
-void MyApp::PositionObjects()
-{
-}
-
 void MyApp::CreateVertexShader(ID3D11VertexShader** shader, LPCWSTR filename, LPCSTR entryPoint)
 {
 	ID3DBlob* VSByteCode = 0;
@@ -133,7 +182,9 @@ void MyApp::CreateVertexShader(ID3D11VertexShader** shader, LPCWSTR filename, LP
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
 	UINT numElements = sizeof(vertexDesc) / sizeof(D3D11_INPUT_ELEMENT_DESC);
@@ -175,31 +226,10 @@ void MyApp::CreateConstantBuffer(ID3D11Buffer** buffer, UINT size)
 	HR(mDevice->CreateBuffer(&desc, NULL, buffer));
 }
 
-void MyApp::SetupStaticLights()
-{
-}
-
-void MyApp::DrawObject(GObject* object, const GFirstPersonCamera* camera)
-{
-	DirectX::XMMATRIX world = XMLoadFloat4x4(&object->GetWorldTransform());
-	Draw(object, camera, world, false);
-}
-
-void MyApp::DrawObject(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& transform)
-{
-	DirectX::XMMATRIX world = XMLoadFloat4x4(&object->GetWorldTransform()) * transform;
-	Draw(object, camera, world, false);
-}
-
-void MyApp::DrawShadow(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& transform)
-{
-	DirectX::XMMATRIX world = XMLoadFloat4x4(&object->GetWorldTransform()) * transform;
-	Draw(object, camera, world, true);
-}
-
-void MyApp::Draw(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& world, bool bShadow)
+void MyApp::Draw(GObject* object, const GFirstPersonCamera* camera, DirectX::XMMATRIX& transform)
 {
 	// Store convenient matrices
+	DirectX::XMMATRIX world = XMLoadFloat4x4(&object->GetWorldTransform()) * transform;
 
 	// Set per object constants
 	mImmediateContext->Map(mConstBufferPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbPerObjectResource);
@@ -207,6 +237,9 @@ void MyApp::Draw(GObject* object, const GFirstPersonCamera* camera, DirectX::XMM
 	
 	cbPerObject->world = DirectX::XMMatrixTranspose(world);
 	cbPerObject->worldViewProj = DirectX::XMMatrixTranspose(world*mCamera.ViewProj());
+	cbPerObject->worldInvTranspose = MathHelper::InverseTranspose(world);
+	cbPerObject->texTransform = DirectX::XMLoadFloat4x4(&object->GetTexTransform());
+	cbPerObject->material = object->GetMaterial();
 
 	mImmediateContext->Unmap(mConstBufferPerObject, 0);
 
@@ -242,6 +275,8 @@ void MyApp::Draw(GObject* object, const GFirstPersonCamera* camera, DirectX::XMM
 void MyApp::OnResize()
 {
 	D3DApp::OnResize();
+
+	mCamera.SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 }
 
 void MyApp::UpdateScene(float dt)
@@ -257,15 +292,31 @@ void MyApp::DrawScene()
 	mImmediateContext->IASetInputLayout(mVertexLayout);
 	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Update Camera
-
 	// Set per frame constants.
 	mImmediateContext->Map(mConstBufferPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &cbPerFrameResource);
-
 	cbPerFrame = (ConstBufferPerFrame*)cbPerFrameResource.pData;
-	cbPerFrame->camPosW = mCamera.GetPosition();
-
+	cbPerFrame->eyePosW = mCamera.GetPosition();
+	cbPerFrame->light = mLight;
 	mImmediateContext->Unmap(mConstBufferPerFrame, 0);
+
+	// Bind Constant Buffers
+	mImmediateContext->VSSetConstantBuffers(1, 1, &mConstBufferPerObject);
+	mImmediateContext->PSSetConstantBuffers(0, 1, &mConstBufferPerFrame);
+	mImmediateContext->PSSetConstantBuffers(1, 1, &mConstBufferPerObject);
+
+	// Set Shaders
+	mImmediateContext->VSSetShader(mBasicVertexShader, NULL, 0);
+	mImmediateContext->PSSetShader(mBasicPixelShader, NULL, 0);
+
+	// Set State
+	ID3D11SamplerState* samplers[] = { RenderStates::DefaultSS };
+	mImmediateContext->PSSetSamplers(0, 1, samplers);
+
+	Draw(mWallFloor, &mCamera);
+	Draw(mWallCeil, &mCamera);
+	Draw(mWallLeft, &mCamera);
+	Draw(mWallRight, &mCamera);
+	Draw(mCharacter, &mCamera);
 
 	HR(mSwapChain->Present(0, 0));
 }

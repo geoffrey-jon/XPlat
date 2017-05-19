@@ -1,10 +1,10 @@
 #include "GCube.h"
 
-GCube::GCube() : GObject()
-{ 
+GCube::GCube(float x, float y, float z) : GObject()
+{
 	GeometryGenerator geoGen;
 	GeometryGenerator::MeshData cube;
-	geoGen.CreateBox3(1.0f, 1.0f, 1.0f, cube);
+	geoGen.CreateBox3(x, y, z, cube);
 
 	mVertexCount = cube.Vertices.size();
 	mIndexCount = cube.Indices.size();
@@ -15,7 +15,7 @@ GCube::GCube() : GObject()
 		mVertices[i].Pos = cube.Vertices[i].Position;
 		mVertices[i].Normal = cube.Vertices[i].Normal;
 		mVertices[i].Tex = cube.Vertices[i].TexC;
-//		mVertices[i].TangentU = cube.Vertices[i].TangentU;
+		//		mVertices[i].TangentU = cube.Vertices[i].TangentU;
 	}
 
 	mIndices.resize(mIndexCount);
