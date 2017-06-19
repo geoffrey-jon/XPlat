@@ -19,6 +19,15 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{aba26f4e-5e0f-45c1-8970-68245c5fe567}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{22ca2254-4500-4e6c-bcdc-c682e9336ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Shapes">
+      <UniqueIdentifier>{6a23782a-46b7-4d6e-ae07-15976b041493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConstantBuffer">
+      <UniqueIdentifier>{62963594-49a3-4b2b-bf19-59d2dc853717}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\DDSTextureLoader.h">
@@ -39,31 +48,7 @@
     <ClInclude Include="Source\GameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GCube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GeometryGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GPlane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GPlaneXY.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GPlaneXZ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GPlaneYZ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GSphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\LightHelper.h">
@@ -84,6 +69,57 @@
     <ClInclude Include="Camera\GCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GPixelShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GVertexShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GCube.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GPlane.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GPlaneXY.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GPlaneXZ.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GPlaneYZ.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GSphere.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GTriangle.h">
+      <Filter>Object\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LightEyeCB.h">
+      <Filter>ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GConstantBuffer.h">
+      <Filter>ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ObjectTransformsCB.h">
+      <Filter>ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RenderStates.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\DDSTextureLoader.cpp">
@@ -98,31 +134,7 @@
     <ClCompile Include="Source\GameTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GCube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GeometryGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GPlane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GPlaneXY.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GPlaneXZ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GPlaneYZ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GSphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GTriangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\MathHelper.cpp">
@@ -136,6 +148,60 @@
     </ClCompile>
     <ClCompile Include="Camera\GCamera.cpp">
       <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GPixelShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GVertexShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GCube.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GPlaneXY.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GPlane.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GPlaneXZ.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GPlaneYZ.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GTriangle.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GSphere.cpp">
+      <Filter>Object\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightEyeCB.cpp">
+      <Filter>ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GConstantBuffer.cpp">
+      <Filter>ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ObjectTransformsCB.cpp">
+      <Filter>ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RenderStates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GShader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

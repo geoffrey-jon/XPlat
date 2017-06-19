@@ -11,11 +11,11 @@
 
 cbuffer cbPerObject : register(b1)
 {
-	float4x4 gWorld;
+    float4x4 gWorld;
     float4x4 gWorldViewProj;
     float4x4 gWorldInvTranspose;
     float4x4 gTexTransform;
-    Material gMaterial;
+    SurfaceProperties gSurface;
 };
 
 struct VertexIn

@@ -85,60 +85,32 @@ bool GObject::ReadObjFile()
 	return true;
 }
 
-void GObject::SetMaterial(Material mat)
+void GObject::SetSurfaceProperties(SurfaceProperties surface)
 {
-	mMaterial.Ambient = mat.Ambient;
-	mMaterial.Diffuse = mat.Diffuse;
-	mMaterial.Specular = mat.Specular;
-	mMaterial.Reflect = mat.Reflect;
+	mSurface.Ambient = surface.Ambient;
+	mSurface.Diffuse = surface.Diffuse;
+	mSurface.Specular = surface.Specular;
+	mSurface.Reflect = surface.Reflect;
 }
 
 void GObject::SetAmbient(DirectX::XMFLOAT4 ambient)
 {
-	mMaterial.Ambient = ambient;
+	mSurface.Ambient = ambient;
 }
 
 void GObject::SetDiffuse(DirectX::XMFLOAT4 diffuse)
 {
-	mMaterial.Diffuse = diffuse;
+	mSurface.Diffuse = diffuse;
 }
 
 void GObject::SetSpecular(DirectX::XMFLOAT4 specular)
 {
-	mMaterial.Specular = specular;
+	mSurface.Specular = specular;
 }
 
 void GObject::SetReflect(DirectX::XMFLOAT4 reflect)
 {
-	mMaterial.Reflect = reflect;
-}
-
-void GObject::SetShadowMaterial(Material mat)
-{
-	mShadowMaterial.Ambient = mat.Ambient;
-	mShadowMaterial.Diffuse = mat.Diffuse;
-	mShadowMaterial.Specular = mat.Specular;
-	mShadowMaterial.Reflect = mat.Reflect;
-}
-
-void GObject::SetAmbientShadow(DirectX::XMFLOAT4 ambient)
-{
-	mShadowMaterial.Ambient = ambient;
-}
-
-void GObject::SetDiffuseShadow(DirectX::XMFLOAT4 diffuse)
-{
-	mShadowMaterial.Diffuse = diffuse;
-}
-
-void GObject::SetSpecularShadow(DirectX::XMFLOAT4 specular)
-{
-	mShadowMaterial.Specular = specular;
-}
-
-void GObject::SetReflectShadow(DirectX::XMFLOAT4 reflect)
-{
-	mShadowMaterial.Reflect = reflect;
+	mSurface.Reflect = reflect;
 }
 
 void GObject::Translate(float x, float y, float z)
@@ -246,4 +218,14 @@ bool GObject::Pick(const DirectX::XMVECTOR& rayOriginV, const DirectX::XMVECTOR&
 		}
 	}
 	return false;
+}
+
+void GObject::SetMaterial(GMaterial* material)
+{
+	mMaterial = material;
+}
+
+void GObject::SetDiffuseMap(LPCWSTR filename)
+{
+	mDiffuseMapName = filename;
 }

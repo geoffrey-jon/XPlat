@@ -177,12 +177,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\MyApp.cpp" />
-    <ClCompile Include="Source\RenderStates.cpp" />
+    <ClCompile Include="Source\XPlat.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\MyApp.h" />
-    <ClInclude Include="Source\RenderStates.h" />
+    <ClInclude Include="Source\XPlat.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\LightHelper.hlsl">

@@ -21,7 +21,7 @@ cbuffer cbPerObject : register(b1)
     float4x4 gWorldViewProj;
     float4x4 gWorldInvTranspose;
     float4x4 gTexTransform;
-    Material gMaterial;
+    SurfaceProperties gSurface;
 };
 
 Texture2D gDiffuseMap;
@@ -48,10 +48,10 @@ float4 PS(VertexOut pin) : SV_Target
     float4 diffuse  = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-    ComputeDirectionalLight(gMaterial, gLight, pin.NormalW, toEye, ambient, diffuse, specular);
+    ComputeDirectionalLight(gSurface, gLight, pin.NormalW, toEye, ambient, diffuse, specular);
     
     float4 litColor = texColor*(ambient + diffuse) + specular;
-    litColor.a = gMaterial.Diffuse.a;
+    litColor.a = gSurface.Diffuse.a;
 	
     return litColor; 
 }

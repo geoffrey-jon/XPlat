@@ -1,6 +1,7 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
+#include "D3D11.h"
 #include <DirectXMath.h>
 
 struct Vertex
@@ -12,6 +13,12 @@ struct Vertex
 	DirectX::XMFLOAT3 Pos;
 	DirectX::XMFLOAT3 Normal;
 	DirectX::XMFLOAT2 Tex;
+};
+
+class InputLayouts
+{
+public:
+	static const D3D11_INPUT_ELEMENT_DESC BasicVertexLayout[3];
 };
 
 #endif // VERTEX_H

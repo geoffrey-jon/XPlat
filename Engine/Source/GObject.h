@@ -4,11 +4,13 @@
 #include "D3D11.h"
 #include "LightHelper.h"
 #include "Vertex.h"
+#include "GMaterial.h"
 #include "DirectXCollision.h"
 #include <string>
 #include <vector>
 
 class GTriangle;
+class GMaterial;
 
 __declspec(align(16))
 class GObject
@@ -23,22 +25,25 @@ public:
 
 	bool Init();
 
-	inline Material GetMaterial() { return mMaterial; }
-	void SetMaterial(Material mat);
+	inline SurfaceProperties GetSurfaceProperies() { return mSurface; }
+	void SetSurfaceProperties(SurfaceProperties surface);
 	void SetAmbient(DirectX::XMFLOAT4 ambient);
 	void SetDiffuse(DirectX::XMFLOAT4 diffuse);
 	void SetSpecular(DirectX::XMFLOAT4 specular);
 	void SetReflect(DirectX::XMFLOAT4 reflect);
 
-	inline Material GetShadowMaterial() { return mShadowMaterial; }
-	void SetShadowMaterial(Material mat);
 	void SetAmbientShadow(DirectX::XMFLOAT4 ambient);
 	void SetDiffuseShadow(DirectX::XMFLOAT4 diffuse);
 	void SetSpecularShadow(DirectX::XMFLOAT4 specular);
 	void SetReflectShadow(DirectX::XMFLOAT4 reflect);
 
-	void SetTexture(LPCWSTR filename);
 	void SetTextureScaling(float x, float y);
+
+	void SetDiffuseMap(LPCWSTR filename);
+	inline LPCWSTR GetDiffuseMap() { return mDiffuseMapName; }
+
+	inline GMaterial* GetMaterial() { return mMaterial; }
+	void SetMaterial(GMaterial* material);
 
 	void Translate(float x, float y, float z);
 	void Rotate(float x, float y, float z);
@@ -62,7 +67,7 @@ public:
 		      const DirectX::XMVECTOR& rayDirectionV, 
 		      const DirectX::XMMATRIX& invView,
 		      GTriangle* pickedTri);
-
+	
 	inline bool IsIndexed() { return isIndexed; }
 	inline void SetIndexed(bool bIndexed) { isIndexed = bIndexed; }
 
@@ -71,11 +76,15 @@ private:
 	void UpdateWorldTransform();
 
 protected:
+	GMaterial* mMaterial;
+
 	ID3D11Buffer* mVertexBuffer;
 	ID3D11Buffer* mIndexBuffer;
 
 	ID3D11ShaderResourceView* mDiffuseMapSRV;
 	ID3D11ShaderResourceView* mNormalMapSRV;
+
+	LPCWSTR mDiffuseMapName;
 
 	DirectX::BoundingBox mAABB;
 
@@ -84,8 +93,7 @@ protected:
 
 	std::string mFilename;
 
-	Material mMaterial;
-	Material mShadowMaterial;
+	SurfaceProperties mSurface;
 
 	DirectX::XMFLOAT4X4 mWorldTransform;
 	DirectX::XMFLOAT4X4 mTexTransform;

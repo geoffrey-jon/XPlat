@@ -64,9 +64,9 @@ struct SpotLight
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.
 };
 
-struct Material
+struct SurfaceProperties
 {
-	Material() { ZeroMemory(this, sizeof(this)); }
+	SurfaceProperties() { ZeroMemory(this, sizeof(this)); }
 
 	DirectX::XMFLOAT4 Ambient;
 	DirectX::XMFLOAT4 Diffuse;
