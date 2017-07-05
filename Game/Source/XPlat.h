@@ -21,8 +21,9 @@ public:
 
 	bool Init();
 	void UpdateScene(float dt) override;
-	void DrawScene();
-	void OnResize();
+	void DrawScene() override;
+	void OnResize() override;
+	void OnKeyDown(WPARAM key, LPARAM info) override;
 
 private:
 	GRenderer* mRenderer;
@@ -34,7 +35,6 @@ private:
 	GCube* mWallLeft;
 
 	GCube* mCharacter;
-	GSphere* mEnemy;
 
 	// Lights
 	DirectionalLight mLight;

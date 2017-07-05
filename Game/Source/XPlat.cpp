@@ -41,7 +41,6 @@ bool XPlat::Init()
 	mWallLeft = new GCube(5.0f, 90.0f, 1.0f);
 	mWallRight = new GCube(5.0f, 90.0f, 1.0f);
 	mCharacter = new GCube(5.0f, 5.0f, 5.0f);
-	mEnemy = new GSphere();
 
 	// Initialize Object Placement and Properties
 	mWallFloor->Translate(80.0f, 2.5f, 0.0f);
@@ -86,13 +85,6 @@ bool XPlat::Init()
 
 	mCharacter->SetDiffuseMap(L"Resources/Textures/crate.dds");
 
-	mEnemy->Translate(120.0f, 50.0f, 0.0f);
-	mEnemy->SetAmbient(DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
-	mEnemy->SetDiffuse(DirectX::XMFLOAT4(0.6f, 0.6f, 0.0f, 1.0f));
-	mEnemy->SetSpecular(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-
-	mEnemy->SetDiffuseMap(L"Resources/Textures/ice.dds");
-
 	// Create a new Material for my objects to use
 	GMaterial* material = new GMaterial();
 	material->SetVertexShader(L"Shaders/VertexShader.hlsl", "VS");
@@ -100,7 +92,15 @@ bool XPlat::Init()
 	material->SetInputLayout(InputLayouts::BasicVertexLayout, 3);
 	material->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// TODO: Make CB for Per Object constants
+	material->SetRasterizerState(RenderStates::DefaultRS);
+
+	material->SetDepthStencilState(RenderStates::DefaultDSS);
+	material->SetStencilRef(0);
+
+	material->SetBlendState(RenderStates::DefaultBS);
+	float factor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	material->SetBlendFactor(factor);
+	material->SetSampleMask(0xffffffff);
 
 	LightEyeCB* lightEyeCB = new LightEyeCB();
 	lightEyeCB->SetDirectionalLight(mLight);
@@ -123,14 +123,12 @@ bool XPlat::Init()
 	mWallLeft->SetMaterial(material);
 	mWallRight->SetMaterial(material);
 	mCharacter->SetMaterial(material);
-	mEnemy->SetMaterial(material);
 
 	mRenderer->RegisterObject(mWallFloor);
 	mRenderer->RegisterObject(mWallCeil);
 	mRenderer->RegisterObject(mWallLeft);
 	mRenderer->RegisterObject(mWallRight);
 	mRenderer->RegisterObject(mCharacter);
-	mRenderer->RegisterObject(mEnemy);
 
 	return true;
 }
@@ -150,4 +148,24 @@ void XPlat::UpdateScene(float dt)
 void XPlat::DrawScene()
 {
 	mRenderer->DrawScene();
+}
+
+void XPlat::OnKeyDown(WPARAM key, LPARAM info)
+{
+	if (key == 'w')
+	{
+		mCharacter->Translate(0.0f, 1.0f, 0.0f);
+	}
+	else if (key == 's')
+	{
+		mCharacter->Translate(0.0f, -1.0f, 0.0f);
+	}
+	else if (key == 'a')
+	{
+		mCharacter->Translate(-1.0f, 0.0f, 0.0f);
+	}
+	else if (key == 'd')
+	{
+		mCharacter->Translate(1.0f, 0.0f, 0.0f);
+	}
 }

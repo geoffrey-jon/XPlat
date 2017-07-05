@@ -129,7 +129,10 @@
     <ClInclude Include="Source\GameTimer.h" />
     <ClInclude Include="Source\GConstantBuffer.h" />
     <ClInclude Include="Source\GCube.h" />
+    <ClInclude Include="Source\GDomainShader.h" />
     <ClInclude Include="Source\GeometryGenerator.h" />
+    <ClInclude Include="Source\GGeometryShader.h" />
+    <ClInclude Include="Source\GHullShader.h" />
     <ClInclude Include="Source\GMaterial.h" />
     <ClInclude Include="Source\GObject.h" />
     <ClInclude Include="Source\GPlane.h" />
@@ -159,7 +162,10 @@
     <ClCompile Include="Source\GameTimer.cpp" />
     <ClCompile Include="Source\GConstantBuffer.cpp" />
     <ClCompile Include="Source\GCube.cpp" />
+    <ClCompile Include="Source\GDomainShader.cpp" />
     <ClCompile Include="Source\GeometryGenerator.cpp" />
+    <ClCompile Include="Source\GGeometryShader.cpp" />
+    <ClCompile Include="Source\GHullShader.cpp" />
     <ClCompile Include="Source\GMaterial.cpp" />
     <ClCompile Include="Source\GObject.cpp" />
     <ClCompile Include="Source\GPlane.cpp" />

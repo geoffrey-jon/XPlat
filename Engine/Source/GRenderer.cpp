@@ -252,22 +252,6 @@ void GRenderer::CreateGeometryBuffers(GObject* obj, bool bDynamic)
 		HR(mDevice->CreateBuffer(&ibd, &iinitData, obj->GetIndexBuffer()));
 	}
 }
-/*
-void GRenderer::CreateVertexShader(ID3D11VertexShader** shader, LPCWSTR filename, LPCSTR entryPoint, D3D11_INPUT_ELEMENT_DESC* inputLayoutDesc)
-{
-	ID3DBlob* VSByteCode = 0;
-	HR(D3DCompileFromFile(filename, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, "vs_5_0", D3DCOMPILE_DEBUG, 0, &VSByteCode, 0));
-
-	HR(mDevice->CreateVertexShader(VSByteCode->GetBufferPointer(), VSByteCode->GetBufferSize(), NULL, shader));
-
-	UINT numElements = sizeof(inputLayoutDesc) / sizeof(D3D11_INPUT_ELEMENT_DESC);
-
-	// Create the input layout
-	HR(mDevice->CreateInputLayout(inputLayoutDesc, numElements, VSByteCode->GetBufferPointer(), VSByteCode->GetBufferSize(), &mVertexLayout));
-
-	VSByteCode->Release();
-}
-*/
 
 void GRenderer::CreateVertexShader(GMaterial* material)
 {
@@ -292,17 +276,6 @@ void GRenderer::CreateVertexShader(GMaterial* material)
 
 	VSByteCode->Release();
 }
-/*
-void GRenderer::CreatePixelShader(ID3D11PixelShader** shader, LPCWSTR filename, LPCSTR entryPoint)
-{
-	ID3DBlob* PSByteCode = 0;
-	HR(D3DCompileFromFile(filename, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, "ps_5_0", D3DCOMPILE_DEBUG, 0, &PSByteCode, 0));
-
-	HR(mDevice->CreatePixelShader(PSByteCode->GetBufferPointer(), PSByteCode->GetBufferSize(), NULL, shader));
-
-	PSByteCode->Release();
-}
-*/
 
 void GRenderer::CreatePixelShader(GMaterial* material)
 {
@@ -326,30 +299,12 @@ void GRenderer::LoadTextureToSRV(ID3D11ShaderResourceView** SRV, LPCWSTR filenam
 	ReleaseCOM(texResource); // view saves reference
 }
 
-ID3D11Buffer* GRenderer::CreateConstantBuffer(UINT size)
-{
-	ID3D11Buffer* buffer;
-	D3D11_BUFFER_DESC desc;
-
-	desc.Usage = D3D11_USAGE_DYNAMIC;
-	desc.ByteWidth = size;
-	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	desc.MiscFlags = 0;
-	desc.StructureByteStride = 0;
-
-	HR(mDevice->CreateBuffer(&desc, NULL, &buffer));
-	return buffer;
-}
-
 void GRenderer::CreateConstantBuffers(GMaterial* material)
 {
-	// TODO: Clean this mess up. What is the right way to GetConstantBuffers
 	auto cBuffers = material->GetConstantBuffers();
-	UINT numBuffers = material->GetNumConstantBuffers();
-	for (UINT i = 0; i < numBuffers; ++i)
+	for (auto it = cBuffers.begin(); it != cBuffers.end(); ++it)
 	{
-		GConstantBuffer* cb = cBuffers->second;
+		GConstantBuffer* cb = it->second;
 
 		D3D11_BUFFER_DESC desc;
 
@@ -363,8 +318,6 @@ void GRenderer::CreateConstantBuffers(GMaterial* material)
 		ID3D11Buffer* buffer = 0;
 		HR(mDevice->CreateBuffer(&desc, NULL, &buffer));
 		cb->SetBuffer(buffer);
-
-		cBuffers++;
 	}
 }
 
@@ -373,14 +326,12 @@ void GRenderer::Draw(GObject* object, const GFirstPersonCamera* camera, DirectX:
 	// Store convenient matrices
 	DirectX::XMMATRIX world = XMLoadFloat4x4(&object->GetWorldTransform()) * transform;
 
-	// TODO: Update all constant buffers with per object fields
 	GMaterial* material = object->GetMaterial();
 
 	auto cBuffers = material->GetConstantBuffers();
-	UINT numBuffers = material->GetNumConstantBuffers();
-	for (UINT i = 0; i < numBuffers; ++i)
+	for (auto it = cBuffers.begin(); it != cBuffers.end(); ++it)
 	{
-		GConstantBuffer* cb = cBuffers->second;
+		GConstantBuffer* cb = it->second;
 
 		if (cb->GetUpdateFrequency() == PER_OBJECT)
 		{
@@ -389,8 +340,6 @@ void GRenderer::Draw(GObject* object, const GFirstPersonCamera* camera, DirectX:
 			cb->Update(resource, object);
 			mImmediateContext->Unmap(cb->GetBuffer(), 0);
 		}
-
-		cBuffers++;
 	}
 
 	// Set Vertex Buffer to Input Assembler Stage
@@ -427,7 +376,6 @@ void GRenderer::RegisterObject(GObject* obj)
 	GMaterial* material = obj->GetMaterial();
 
 	// Object Operations
-
 	CreateGeometryBuffers(obj, false);
 	
 	// TODO: Move Ownership of DiffuseMap to Material
@@ -461,12 +409,11 @@ void GRenderer::DrawScene()
 		mImmediateContext->IASetInputLayout(material->GetInputLayout());
 		mImmediateContext->IASetPrimitiveTopology(material->GetTopology());
 
-		// TODO: Clean up access to cBuffers
 		auto cBuffers = material->GetConstantBuffers();
-		UINT numBuffers = material->GetNumConstantBuffers();
-		for (UINT i = 0; i < numBuffers; ++i)
+		for (auto it = cBuffers.begin(); it != cBuffers.end(); ++it)
 		{
-			GConstantBuffer* cb = cBuffers->second;
+			UINT registerID = it->first;
+			GConstantBuffer* cb = it->second;
 
 			if (cb->GetUpdateFrequency() == PER_FRAME)
 			{
@@ -477,8 +424,6 @@ void GRenderer::DrawScene()
 			}
 
 			ID3D11Buffer* buffer = cb->GetBuffer();
-			// TODO: Why am I using a map? Why not just give ConstantBuffers a registerID member variable?
-			UINT registerID = cBuffers->first;
 			if (cb->IsBoundToVS())
 			{
 				mImmediateContext->VSSetConstantBuffers(registerID, 1, &buffer);
@@ -487,63 +432,54 @@ void GRenderer::DrawScene()
 			{
 				mImmediateContext->PSSetConstantBuffers(registerID, 1, &buffer);
 			}
-
-			cBuffers++;
 		}
 
-		// VERTEX SHADER
+		// Vertex Shader
 		GVertexShader* vs = material->GetVertexShader();
-/*
-		for (UINT i = 0; i < vs->GetNumSamplers(); ++i)
+		if (vs) 
 		{
-			ID3D11SamplerState* ss = vs->GetSamplerAt(i);
-			mImmediateContext->VSSetSamplers(i, 1, &ss);
+			mImmediateContext->VSSetShader(vs->GetShader(), NULL, 0);
 		}
 
-		for (UINT i = 0; i < vs->GetNumShaderResources(); ++i)
+		// Hull Shader
+		GHullShader* hs = material->GetHullShader();
+		if (hs)
 		{
-			ID3D11ShaderResourceView* srv = vs->GetShaderResourceAt(i);
-			mImmediateContext->VSSetShaderResources(i, 1, &srv);
+			mImmediateContext->HSSetShader(hs->GetShader(), NULL, 0);
 		}
-*/
-		mImmediateContext->VSSetShader(vs->GetShader(), NULL, 0);
 
+		// Domain Shader
+		GDomainShader* ds = material->GetDomainShader();
+		if (ds)
+		{
+			mImmediateContext->DSSetShader(ds->GetShader(), NULL, 0);
+		}
 
-		// PIXEL SHADER
+		// Geometry Shader
+		GGeometryShader* gs = material->GetGeometryShader();
+		if (gs)
+		{
+			mImmediateContext->GSSetShader(gs->GetShader(), NULL, 0);
+		}
+
+		// Pixel Shader
 		GPixelShader* ps = material->GetPixelShader();
-/*
-		for (UINT i = 0; i < ps->GetNumSamplers(); ++i)
+		if (ps)
 		{
-			ID3D11SamplerState* ss = ps->GetSamplerAt(i);
-			mImmediateContext->PSSetSamplers(i, 1, &ss);
+			mImmediateContext->PSSetShader(ps->GetShader(), NULL, 0);
 		}
+		
+		mImmediateContext->RSSetState(material->GetRasterizerState());
+		mImmediateContext->OMSetDepthStencilState(material->GetDepthStencilState(), material->GetStencilRef());
+		mImmediateContext->OMSetBlendState(material->GetBlendState(), material->GetBlendFactor(), material->GetSampleMask());
 
-		for (UINT i = 0; i < ps->GetNumShaderResources(); ++i)
-		{
-			ID3D11ShaderResourceView* srv = ps->GetShaderResourceAt(i);
-			mImmediateContext->PSSetShaderResources(i, 1, &srv);
-		}
-*/
-		mImmediateContext->PSSetShader(ps->GetShader(), NULL, 0);
-
-
-//		mImmediateContext->HSSetShader(material->GetHullShader(), NULL, 0);
-//		mImmediateContext->DSSetShader(material->GetDomainShader(), NULL, 0);
-//		mImmediateContext->GSSetShader(material->GetGeometryShader(), NULL, 0);
-
-//		mImmediateContext->RSSetState(material->GetRasterizerState());
-//		mImmediateContext->OMSetDepthStencilState(material->GetDepthStencilState(), material->GetStencilRef());
-//		mImmediateContext->OMSetBlendState(material->GetBlendState(), material->GetBlendFactor(), material->GetSampleMask());
-
-		// TODO Samplers
+		// TODO: Samplers
 		ID3D11SamplerState* samplers[] = { RenderStates::DefaultSS };
 		mImmediateContext->PSSetSamplers(0, 1, samplers);
 
-//		for (GObject* object : material->GetObjects())
 		auto objects = mObjects.equal_range(material->GetID());
 		for (auto it = objects.first; it != objects.second; ++it)
 		{
-			// Draw Object
 			Draw(it->second, mCamera);
 		}
 	}

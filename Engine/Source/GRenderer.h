@@ -38,12 +38,9 @@ public:
 
 	void CreateGeometryBuffers(GObject* obj, bool dynamic = false);
 
-	ID3D11Buffer* CreateConstantBuffer(UINT size);
 	void CreateConstantBuffers(GMaterial* material);
 
-	//	void CreateVertexShader(ID3D11VertexShader** shader, LPCWSTR filename, LPCSTR entryPoint, D3D11_INPUT_ELEMENT_DESC* inputLayoutDesc);
 	void CreateVertexShader(GMaterial* material);
-//	void CreatePixelShader(ID3D11PixelShader** shader, LPCWSTR filename, LPCSTR entryPoint);
 	void CreatePixelShader(GMaterial* material);
 
 	void LoadTextureToSRV(ID3D11ShaderResourceView** srv, LPCWSTR filename);

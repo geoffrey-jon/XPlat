@@ -102,6 +102,8 @@ protected:
 	DirectX::XMMATRIX mRotation;
 	DirectX::XMMATRIX mScale;
 
+	float mWorldPosition[3];
+
 	UINT mIndexCount;
 	UINT mVertexCount;
 

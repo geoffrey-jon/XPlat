@@ -5,9 +5,13 @@
 
 #include "D3D11.h"
 
-#include "GConstantBuffer.h"
 #include "GVertexShader.h"
+
 #include "GPixelShader.h"
+#include "GHullShader.h"
+#include "GDomainShader.h"
+#include "GGeometryShader.h"
+#include "GConstantBuffer.h"
 
 #include "GObject.h"
 
@@ -24,91 +28,85 @@ public:
 	void* operator new(size_t i){ return _mm_malloc(i,16); }
 	void operator delete(void* p) { _mm_free(p); }
 
-	void RegisterObject(GObject* obj);
-
-	std::vector<GObject*> GetObjects();
-
-	void SetVertexShader(ID3D11VertexShader* shader);
-	void SetHullShader(ID3D11HullShader* shader);
-	void SetDomainShader(ID3D11DomainShader* shader);
-	void SetGeometryShader(ID3D11GeometryShader* shader);
-	void SetPixelShader(ID3D11PixelShader* shader);
-
-	void SetVertexShader(LPCWSTR filename, LPCSTR entryPoint);
-	void SetPixelShader(LPCWSTR filename, LPCSTR entryPoint);
-
-	inline void SetInputLayout(ID3D11InputLayout* layout) { mInputLayout = layout; }
-
-	void SetInputLayout(const D3D11_INPUT_ELEMENT_DESC layout[], UINT numElements);
-
-	void SetTopology(D3D11_PRIMITIVE_TOPOLOGY topology);
-
-	void SetConstantBuffer(GConstantBuffer* buffer);
-
-	void SetRasterizerState(ID3D11RasterizerState* state);
-
-	void SetDepthStencilState(ID3D11DepthStencilState* state);
-	void SetStencilRef(UINT ref);
-
-	void SetBlendState(ID3D11BlendState* state);
-	void SetBlendFactor(FLOAT factor[4]);
-	void SetSampleMask(UINT mask);
-
-//	ID3D11VertexShader*   GetVertexShader();
-	ID3D11HullShader*     GetHullShader();
-	ID3D11DomainShader*   GetDomainShader();
-	ID3D11GeometryShader* GetGeometryShader();
-//	ID3D11PixelShader*    GetPixelShader();
-
-	inline GVertexShader* GetVertexShader() { return mVS; }
-	inline GPixelShader* GetPixelShader() { return mPS; }
-
-	inline ID3D11InputLayout* GetInputLayout() { return mInputLayout; }
-	inline D3D11_PRIMITIVE_TOPOLOGY GetTopology() { return mTopology; }
-
-	inline ID3D11RasterizerState* GetRasterizerState() { return mRasterizerState; }
-
-	inline ID3D11DepthStencilState* GetDepthStencilState() { return mDepthStencilState;	}
-	inline UINT GetStencilRef() { return mStencilRef; }
-
-	inline ID3D11BlendState* GetBlendState() { return mBlendState; }
-	inline FLOAT* GetBlendFactor() { return mBlendFactor; }
-	inline UINT GetSampleMask() { return mSampleMask; }
-
-	void UpdateConstantBuffers();
-
-	void AddConstantBuffer(GConstantBuffer* buffer, UINT registerID);
-
-	std::map<UINT, GConstantBuffer*>::iterator GetConstantBuffers();
-	UINT GetNumConstantBuffers();
-
+	// Unique ID
 	inline UINT GetID() { return mID; }
 
+	// Shaders
+	inline GVertexShader* GetVertexShader() { return mVS; }
+	inline GHullShader* GetHullShader() { return mHS; }
+	inline GDomainShader* GetDomainShader() { return mDS; }
+	inline GGeometryShader* GetGeometryShader() { return mGS; }
+	inline GPixelShader* GetPixelShader() { return mPS; }
+
+	void SetVertexShader(LPCWSTR filename, LPCSTR entryPoint);
+	void SetHullShader(LPCWSTR filename, LPCSTR entryPoint);
+	void SetDomainShader(LPCWSTR filename, LPCSTR entryPoint);
+	void SetGeometryShader(LPCWSTR filename, LPCSTR entryPoint);
+	void SetPixelShader(LPCWSTR filename, LPCSTR entryPoint);
+
+	// Input Layout and Description
+	inline ID3D11InputLayout* GetInputLayout() { return mInputLayout; }
 	const D3D11_INPUT_ELEMENT_DESC* GetInputLayoutDesc();
 	inline UINT GetNumInputElements() { return mNumInputElements; }
 
+	void SetInputLayout(const D3D11_INPUT_ELEMENT_DESC layout[], UINT numElements);
+	inline void SetInputLayout(ID3D11InputLayout* layout) { mInputLayout = layout; }
+
+	// Topology
+	inline D3D11_PRIMITIVE_TOPOLOGY GetTopology() { return mTopology; }
+	inline void SetTopology(D3D11_PRIMITIVE_TOPOLOGY topology) { mTopology = topology; }
+
+	// Constant Buffers
+	const std::map<UINT, GConstantBuffer*>& GetConstantBuffers() const;
+
+	void AddConstantBuffer(GConstantBuffer* buffer, UINT registerID);
+
+	// Rasterizer State
+	inline ID3D11RasterizerState* GetRasterizerState() { return mRasterizerState; }
+	inline void SetRasterizerState(ID3D11RasterizerState* state) { mRasterizerState = state; }
+
+	// Depth Stencil State
+	inline ID3D11DepthStencilState* GetDepthStencilState() { return mDepthStencilState; }
+	inline void SetDepthStencilState(ID3D11DepthStencilState* state) { mDepthStencilState = state; }
+
+	inline UINT GetStencilRef() { return mStencilRef; }
+	inline void SetStencilRef(UINT ref) { mStencilRef = ref; }
+
+	// Blend State
+	inline ID3D11BlendState* GetBlendState() { return mBlendState; }
+	inline void SetBlendState(ID3D11BlendState* state) { mBlendState = state; }
+
+	inline FLOAT* GetBlendFactor() { return mBlendFactor; }
+	void SetBlendFactor(FLOAT factor[4]);
+
+	inline UINT GetSampleMask() { return mSampleMask; }
+	inline void SetSampleMask(UINT mask) { mSampleMask = mask; }
+
 private:
+	// Unique ID
 	UINT mID;
 
-	std::vector<GObject*> mObjects;
+	// Shader Objects
+	GVertexShader*   mVS;
+	GHullShader*     mHS;
+	GDomainShader*   mDS;
+	GGeometryShader* mGS;
+	GPixelShader*    mPS;
 
-//	ID3D11VertexShader*   mVS;
-	ID3D11HullShader*     mHS;
-	ID3D11DomainShader*   mDS;
-	ID3D11GeometryShader* mGS;
-//	ID3D11PixelShader*    mPS;
-
-	GVertexShader* mVS;
-	GPixelShader* mPS;
-
+	// Input Layout and Description
 	ID3D11InputLayout* mInputLayout;
+	const D3D11_INPUT_ELEMENT_DESC* mInputLayoutDesc;
+	UINT mNumInputElements;
+
 	D3D11_PRIMITIVE_TOPOLOGY mTopology;
 
 	// Constant Buffers
-	std::map<UINT, GConstantBuffer*> mConstantBuffers;
+	std::map<UINT, GConstantBuffer*> mConstantBuffers;	
 
 	// Samplers
+//	std::map<UINT, GSampler*> mSamplers;
 
+	// State Objects
 	ID3D11RasterizerState* mRasterizerState;
 
 	ID3D11DepthStencilState* mDepthStencilState;
@@ -117,9 +115,6 @@ private:
 	ID3D11BlendState* mBlendState;
 	FLOAT mBlendFactor[4];
 	UINT mSampleMask;
-
-	const D3D11_INPUT_ELEMENT_DESC* mInputLayoutDesc;
-	UINT mNumInputElements;
 };
 
 #endif // GMATERIAL_H

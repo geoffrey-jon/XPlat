@@ -29,6 +29,9 @@ bool GObject::Init()
 	mIndexBuffer = nullptr;
 	mDiffuseMapSRV = nullptr;
 	mNormalMapSRV = nullptr;
+	mWorldPosition[0] = 0.0f;
+	mWorldPosition[1] = 0.0f;
+	mWorldPosition[2] = 0.0f;
 	mTranslation = DirectX::XMMatrixIdentity();
 	mRotation = DirectX::XMMatrixIdentity();
 	mScale = DirectX::XMMatrixIdentity();
@@ -115,7 +118,10 @@ void GObject::SetReflect(DirectX::XMFLOAT4 reflect)
 
 void GObject::Translate(float x, float y, float z)
 {
-	mTranslation = DirectX::XMMatrixTranslation(x, y, z);
+	mWorldPosition[0] += x;
+	mWorldPosition[1] += y;
+	mWorldPosition[2] += z;
+	mTranslation = DirectX::XMMatrixTranslation(mWorldPosition[0], mWorldPosition[1], mWorldPosition[2]);
 	UpdateWorldTransform();
 }
 
